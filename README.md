@@ -64,10 +64,16 @@ This instructions can help you to set up a drupal development project with one p
 * Now you can create the containers and the network for this project. In PhpStorm start the script **startup.sh** (mark startup.sh, Ctrl+Shift+F10). On the very first run Docker will download the basic image and, in case of Apache, create a dependent image with all required applications. If the containers are running (you can control it in PhpStorm by clicking on the Docker-tab at the lower left border) you can take the next steps.
 * To create the database for Drupal, run the script **init_mysql_drupal_db.sh** (mark init_mysql_drupal_db.sh, Ctrl+Shift+F10). **A database with same name will be dropped and recreated!**
 * Now you have to download Drupal 7 or Drupal 8. To do so, run **download_drupal7.sh** or **download_drupal8.sh** (mark the script, Ctrl+Shift+F10). **All files and directories in www/docroot will be deleted!**
-* Before we start to install our Drupal website we have to modify /etc/hosts to add the host names of our containers. To do so, open the terminal in PhpStorm (the tab on the bottom left side). Change into the directory with **addhost.sh**. `sudo addhost.sh` will do the job.
+* Before we start to install our Drupal website we have to modify /etc/hosts to add the host names of our containers. To do so, *open the terminal* in PhpStorm (the tab on the bottom left side). Change into the directory with **addhost.sh**. `sudo addhost.sh` will do the job.
 * Now we can open the website at “http://_APACHE_HOSTNAME_” (or “http://_APACHE_IP_” if we could not change /etc/hosts).
 
     > In Drupal the name of the mysql-hosts is not “localhost” but “mysql”, that is the name of the connected mysql-service.
+
+## Starting and stopping the environment in PhpStorm
+To start the development environment for your project, run the **startup.sh** script as described above. This will create a container representing this environment. In the "Run" tab PhpStorm creates a tab for startup.sh. Here you can control the environment and even stop the containers.
+ 
+## Rebuilding the containers in PhpStorm
+In case you changed some definitions for the containers in the Dockerfiles or in docker-compose.yml you have to rebuild the images and/or the containers. Run the script **rebuild.sh** in PhpStorm as described above. After that, you can close the tab "rebuild.sh" in the "Run" tab.
 
 ## Debugging with PhpStorm
 The Apache-container has been created with xdebug activated. So you can debug any web-session on this server in PhpStorm. To switch on/off debugging in the browser you will find a generator for bookmarklets to control php-debugging on this page https://www.jetbrains.com/phpstorm/marklets/ . Add these bookmarklets to your browser. To switch on/off debugging in PhpStorm you will find the icon “Start Listening for PHP Debug Connections” on the top right edge.
@@ -78,4 +84,6 @@ The Apache-container has been created with xdebug activated. So you can debug an
 * Start your Browser
 * Switch on debugging in your Browser
 
-
+## Using Drush or the Drupal console in PhpStorm
+To start drush or the drupal console select the "Docker" tab in PhpStorm. If PhpStorm is not connected to Docker, klick on the green Arrow on the left side. You will see several containers. Select the apache container and from the context menu select "Exec". If available, select "/bin/bash", else create that command. A console will appear where you can enter shell commands. Drush is available via "drush" command, the drupal console via "drupal". 
+In the same way you can open a shell in the mysql container and issue mysql commands.
