@@ -1,0 +1,45 @@
+# Template file for use in drupal projects
+version: '2'
+services:
+# Define the container for Apache webserver and expose the most important volumes:
+# - the web directory (not the webroot, but this will be a subdir of the web directory)
+# - the logfiles of the webserver
+# - the settings directory for the drupal console
+# - the settings directory for drush
+# - a directory for additional bash settings (e.g. bash setting for drush and drupal console)
+# - It shares the volumes from the drush and drupalconsole services so that it seems that drush
+#   and drupalconsole are installed within this container.
+# - It links to the mysql service to make the service accessible from here (hostname is service name)
+  apache2:
+    container_name: $APACHE_NAME
+    image: $APACHE_IMAGE
+    volumes:
+      - ../www:/var/www
+      - ../.log:/var/log/apache2
+    links:
+      - mysql
+    networks:
+      dev_net:
+        ipv4_address: $APACHE_IP
+
+# Define the container for the mysql service. Expose the database volume to the host machine.
+  mysql:
+    container_name: $MYSQL_NAME
+    image: $MYSQL_IMAGE
+    volumes:
+      - ../.mysql:/var/lib/mysql
+      - ../www/tmp:/var/tmp
+    environment:
+      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
+    networks:
+      dev_net:
+        ipv4_address: $MYSQL_IP
+
+networks:
+  dev_net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: $NET_SUBNET
+        gateway: $NET_GATEWAY

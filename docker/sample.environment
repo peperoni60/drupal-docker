@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+# Environment file to start/create named docker containers.
+# Adjust the values to your needs.
+# - The network settings are used to separate the virtual networks from
+#   one another and to have known IP-addresses for the hosts that can be
+#   used in the /etc/hosts file. The subnet addresses must be unique on
+#   the host, thus they must be adjusted per project.
+
+# With this variable, the names of all containers and networks are built. It must be unique on the host machine
+#
+# @TODO: change PROJECT_NAME
+export PROJECT_NAME=test
+
+# service: apache2
+# the container name:
+export APACHE_NAME=${PROJECT_NAME}_apache2
+# the image to build the container from:
+export APACHE_IMAGE=my/ubuntu:15.10
+# The host name to add to /etc/hosts. It must be unique on the host machine
+# @TODO: change APACHE_HOSTNAME
+export APACHE_HOSTNAME=test.local
+
+# service: mysql
+# the container name:
+export MYSQL_NAME=${PROJECT_NAME}_mysql
+# the image to build the container from:
+export MYSQL_IMAGE=mysql:5.7
+# the host to add to /etc/hosts. It must be unique on the host machine
+# @TODO: change MYSQL_HOSTNAME
+export MYSQL_HOSTNAME=mysql.test.local
+
+# the mysql root password:
+export MYSQL_ROOT_PASSWORD=drootpal
+
+# Networking: unique IP-Address for apache
+# increment the 3rd octet in each project
+# @TODO: change the 3rd octet of IP-addresses
+subnet=172.16.1
+
+export NET_SUBNET=${subnet}.0/24
+export NET_GATEWAY=${subnet}.1
+export APACHE_IP=${subnet}.100
+export MYSQL_IP=${subnet}.101
+
+# Echo the values set above to create an environment file for use by Docker:
+env --unset=PWD --unset=SHLVL --unset=_
+
+# Site install defaults
+# ----------------------
+# credentials for the Drupal database:
+export MYSQL_DRUPAL_USER=drupal
+export MYSQL_DRUPAL_DB=drupal
+export MYSQL_DRUPAL_PASSWORD=drupal
+
+
+# set alias to invoke drush and drupal console in a container
+# first set some options
+cd ..
+parentdir="$(pwd)"
+cd docker
+
+workvol="\$(pwd)":/app
+consolevol="${parentdir}/.console:/root/.console"
+drushvol="${parentdir}/.drush:/root/.drush"
+net="${PROJECT_NAME}_dev_net"
+
+alias drush="docker run -i --rm -v $workvol -v $drushvol --net=$net my/drush"
+alias drupal="docker run -i --rm -v $workvol -v $consolevol --net=$net my/drupalconsole"
+
+# prepare some directories to avoid scripts complaining about missing folders
+old_umask=$(umask)
+umask 000
+mkdir "${parentdir}/www" 2> /dev/null
+mkdir "${parentdir}/www/docroot" 2> /dev/null
+mkdir "${parentdir}/www/tmp" 2> /dev/null
+mkdir "${parentdir}/www/private" 2> /dev/null
+mkdir "${parentdir}/www/private/default" 2> /dev/null
+mkdir "${parentdir}/www/private/default/files" 2> /dev/null
+umask "${old_umask}"
