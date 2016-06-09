@@ -24,10 +24,27 @@ As I wanted to use docker-compose, too, I tried to install it from the repositor
 
 > Sometimes this kind of docker-compose has problems to run when using the PhpStorm built-in Docker tools. But that doesn't matter as I wrote scripts to run docker-compose. And these scripts integrate well with PhpStorm. See below.
 
+## Overview
+
+These are the minimal steps to take if you set up and work with a project:
+
+* Create a new project (**once** per project)
+
+* Build Images (**once per computer**)
+
+* Setup the environment (**once** per project)
+
+* Create and start the containers (**once** per project)
+
+* Install Drupal and a drupal site (**once** per project)
+
+* Start/Stop the containers (regularly, as needed)
+
+
 ## Set up a drupal development project with Docker
 
-This instructions can help you to set up a drupal development project with one project-specific container for Apache/PHP/drush/drupal-console and one project specific container for Mysql. Both containers run in a project-specific network. All the project files (PHP, other files, Mysql database files) will be stored locally (that means: on the host's file system) and not within the containers. Thus the containers could be deleted and recreated as needed without losing data. 
-
+This instructions can help you to set up a drupal development project with one project-specific container for Apache/PHP/drush/drupal-console and one project specific container for Mysql. Both containers run in a project-specific network. All the project files (PHP, other files, Mysql database files) will be stored locally (that means: on the host's file system) and not within the containers. Thus the containers could be deleted and recreated as needed without losing data.
+ 
 > The following instructions use *italic* text as placeholders. These
 > placeholders must be replaced by real values when following the instructions.
 
