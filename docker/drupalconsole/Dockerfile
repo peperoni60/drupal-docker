@@ -11,4 +11,6 @@ VOLUME /root/.console
 
 # Change the entrypoint to match the new drupal path and include UMASK value
 COPY ./docker-entrypoint.sh /
+RUN chmod a+x /docker-entrypoint.sh
+
 ENTRYPOINT ["/docker-entrypoint.sh"]

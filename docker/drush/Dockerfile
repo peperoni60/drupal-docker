@@ -14,4 +14,6 @@ VOLUME /root/.drush
 
 # Change the entrypoint to match the new drush path
 COPY ./docker-entrypoint.sh /
+RUN chmod a+x /docker-entrypoint.sh
+
 ENTRYPOINT ["/docker-entrypoint.sh"]
