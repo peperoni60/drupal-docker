@@ -175,7 +175,6 @@ The Apache-container has been created with xdebug activated. So you can debug an
 ## Using Drush or the Drupal console in PhpStorm
 
 To start drush or the drupal console open a terminal in PhpStorm. From the *Project* directory source **load-env** (by issuing ". load-env" or "source load-env" in the command line (without the quotation marks). This will set up aliases for drush and drupal to work with the containers.
-In the same way you can open a shell in the mysql container and issue mysql commands.
 
 > **Tip**  
 > You can automate the loading of the environment by adding the following lines to your `~/.profile`.
@@ -186,6 +185,26 @@ if [ -e "./load-env" ]; then
    . ./load-env
 fi
 ```
+
+> **Tip**
+If you issue `drush init` and/or `drupal init` once for your project you will also add some nice features from drush or the drupal console to shell: the shell prompt will show your git status, you will have code completion and so on.
+
+## Open a shell in the mysql or apache container
+You can directly issue commands in the apache or mysql containerin PhpStorm
+
+* Select the "Docker" tab.
+
+* Connect to Docker, if PhpStorm is not already connected (press the green arrow on the left side).
+
+* Right-click on the apache or mysql-container (they must be green, otherwise start the containers with **startup.sh** described above
+
+* Select "Exec" from the context menu.
+
+* Select "create" and then enter "/bin/bash". Later "/bin/bash" will be available in the menu.
+
+Now PhPStorm will open a new shell.
+> **Hint**  
+If more than one shell-tab is open for that container, PhpStorm has problems to activtate that tab. Select the most right tab titled "/bin/bash" **and then click into that tab** to activate it and set the focus on it. Otherwise it could be that you type into the most recent active editor window! 
 
 ## Moving/sharing the development environment
 
