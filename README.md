@@ -43,7 +43,12 @@ These are the minimal steps to take if you set up and work with a project:
 
 ## Set up a drupal development project with Docker
 
-This instructions can help you to set up a drupal development project with one project-specific container for Apache/PHP/drush/drupal-console and one project specific container for Mysql. Both containers run in a project-specific network. All the project files (PHP, other files, Mysql database files) will be stored locally (that means: on the host's file system) and not within the containers. Thus the containers could be deleted and recreated as needed without losing data.
+This instructions can help you to set up a drupal development project with one project-specific container for Apache/PHP, one project specific container for Mysql. Both containers run in a project-specific network. All the project files (PHP, other files, Mysql database files) will be stored locally (that means: on the host's file system) and not within the containers. Thus the containers could be deleted and recreated as needed without losing data.
+
+To use drush and drupal console you will set up separate images and these images are used by docker to create containers on the fly when needed. 
+> The reason why you set up your own images is: you need to volume the drush and drupal console settings (.drush, .console) and, as they run as root inside, change the default umode 022 (read, write by owner, read only by others) to 000 (read/write to all). Thus the user www-data in the apache container is able to write into directories that are created by the root user of the drupal container. This is not a security issue, as we work locally and use private networks only. 
+
+**So, let's go!**
  
 > The following instructions use *italic* text as placeholders. These
 > placeholders must be replaced by real values when following the instructions.
