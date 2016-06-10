@@ -1,6 +1,5 @@
 #  Drupal-Docker Development
 
-
 ## Why use Docker?
 The first question you could ask would just be this: "Why in the hell should I use docker? I have a development machine running Apache and PHP and Mysql. And now Docker?". Yes you are right. All of these are available on development machines. Let me explain by an example why this could be a problem:
 
@@ -8,7 +7,9 @@ The first question you could ask would just be this: "Why in the hell should I u
 
 With Docker you can create containers holding project specific data while they depend on common images. You can even copy whole development environments from one machine to another or only share the settings of a development environment with others. I investigated Docker and created a checklist and some scripts to create Docker-based Drupal development environments and to interact with Docker containers. As I am on Linux, it was developed and tested on Linux. But I am sure it will run on Mac and Windows in a similar way.  
 
-By the hand: I also use **PhpStorm** (https://www.jetbrains.com/phpstorm/) for development so I describe it from this point of view. Im also sure you can adapt my explanations to other development tools, too.
+I also use **PhpStorm** (https://www.jetbrains.com/phpstorm/) for development so I describe it from this point of view. Im also sure you can adapt my explanations to other development tools, too.
+
+> ### **You don't need to install apache, php or mysql on the computer to run this development environment!** The only requirement is to install Docker (see below).
 
 ## PhpStorm prerequisites
 
@@ -28,17 +29,17 @@ As I wanted to use docker-compose, too, I tried to install it from the repositor
 
 These are the minimal steps to take if you set up and work with a project:
 
-* Create a new project (**once** per project)
+1. Create a new project (**once** per project)
 
-* Build Images (**once per computer**)
+2. Build Images (**once per computer**)
 
-* Setup the environment (**once** per project)
+3. Setup the environment (**once** per project)
 
-* Create and start the containers (**once** per project)
+4. Create and start the containers (**once** per project)
 
-* Install Drupal and a drupal site (**once** per project)
+5. Install Drupal and a drupal site (**once** per project)
 
-* Start/Stop the containers (regularly, as needed)
+6. Start/Stop the containers (regularly, as needed)
 
 
 ## Set up a drupal development project with Docker
@@ -73,11 +74,13 @@ To use drush and drupal console you will set up separate images and these images
     
     * **docker** contains build files and utilities for Docker
     
-    * **docroot** is the root folder for Apache. Here all PHP-files and user created files will reside. Don't change the name as the scripts rely on it.
+    * **www** and subsequent directories will be created automatically during installation
     
-    * **tmp** is a directory for temporary files. It can be used as tmp-directory in Drupal (`admin/config/media/file-system`, use `../tmp`)
-    
-    * **private** is a directory for holding the private files in Drupal, but outside the web root (`admin/config/media/file-system`, use `../private`, in D8: settings.php). If you install backup_migrate, you will need it!
+        * **docroot** is the root folder for Apache. Here all PHP-files and user created files will reside.
+        
+        * **tmp** is a directory for temporary files. It can be used as tmp-directory in Drupal (`admin/config/media/file-system`, use `../tmp`)
+        
+        * **private** is a directory for holding the private files in Drupal, but outside the web root (`admin/config/media/file-system`, use `../private`, in D8: settings.php). If you install backup_migrate, you will need it!
     
     * Following the subsequent steps Docker will create additional directories ***Project*/.log** and ***Project*/.mysql** to hold Apache log files and the Mysql database files, ***Project*/.console** to hold the settings for the Drupal console, ***Project*/.drush** to hold the settings for Drush.
 
@@ -143,34 +146,43 @@ In PhpStorm you can now easily add a run configuration with startup.sh. From the
     sudo ./addhost.sudo.sh
     ```
     This will do the job.
-
-* To download Drupal 7 or Drupal 8, open a terminal in PhpStorm and enter
-    ```
-    cd docker
-    sudo ./download_drupal7.sudo.sh
-    ```
-    or
-    ```
-    cd docker
-    sudo ./download_drupal8.sudo.sh
-    ```
-  This will prepare the docroot with writable "custom" folders in the "modules" and the "themes" folder.
-    > **All files and directories in www/docroot will be deleted!**
-
-* To install a Drupal website with default values, open a terminal in PhPStorm and enter
-    ```
-    cd docker
-    sudo ./drush-si.sudo.sh
-    ```
-    This will create a database and install Drupal within this database.
     
+### Download Drupal
+
+To download Drupal 7 or Drupal 8, open a terminal in PhpStorm and enter
+```
+cd docker
+sudo ./download_drupal7.sudo.sh
+```
+or
+```
+cd docker
+sudo ./download_drupal8.sudo.sh
+```
+  This will prepare the docroot with writable "custom" folders in the "modules" and the "themes" folder.
+> **All files and directories in www/docroot will be deleted!**
+
+### Install Drupal website
+
+#### Install with default values
+
+To install a Drupal website with default values, open a terminal in PhPStorm and enter
+```
+cd docker
+sudo ./drush-si.sudo.sh
+```
+This will create a database and install Drupal within this database. Visit your new site at “http://*APACHE_HOSTNAME*” (or “http://*APACHE_IP*” if you could not change /etc/hosts).
+     
+#### Install manually
+
 * If you want to install Drupal via the browser you have to create the database for Drupal yourself by running the script **create_mysql_drupal_db.sh** in PhpStorm (mark `create_mysql_drupal_db.sh`, then press Ctrl+Shift+F10). **A database with same name will be dropped and recreated!**
     > **Tip**
     > To interact with the terminal window you have to click into it until you see a blinking cursor!
 
-* Now we can open the website at “http://*APACHE_HOSTNAME*” (or “http://*APACHE_IP*” if we could not change /etc/hosts).
+* Now you can open the website at “http://*APACHE_HOSTNAME*” (or “http://*APACHE_IP*” if you could not change /etc/hosts).
 
-    > In Drupal the name of the mysql-hosts is not “localhost” nor *APACHE_HOSTNAME*, but “mysql”, that is the name of the connected mysql-service.
+    > **Remember**  
+    In Drupal the name of the mysql-host is not “localhost” nor *APACHE_HOSTNAME*, but “**mysql**”, that is the name of the connected mysql-service.
 
 ## Starting and stopping the environment in PhpStorm
 
@@ -232,10 +244,10 @@ If more than one shell-tab is open for that container, PhpStorm has problems to 
 
 To move (or share) the development environment to another computer, simply copy the project folder. If necessary make some adjustments to **PROJECT_NAME** and/or **subnet** in file **environment**. Make sure, Docker and PhpStorm is installed and then run the **build.sh** scripts to create the images, run **addhost.sh** as root (sudo) and then execute **startup.sh** in PhpStorm.
 
+To **share the definitions** of the project only share the "docker" folder of your project. On the taget machine follow the steps described in chapter "Overview".
+
 # Bonus
 
 ## SASS compilation
 
 In the docker directory you will find a file **watchers.xml**. In PhpStorm go to File→Settings→Tools→FileWatchers and then import **watchers.xml**. Activate one of the watchers (not both!). Now every sass and scss file will be compiled into a css file. Did you install Sass? No, you don't. Sass is provided by a Docker image! In the same way you can add Compass and many other tools to your environment.
-
-> ### **You don't need to install apache, php or mysql on the computer to run this development environment!**
