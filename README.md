@@ -82,7 +82,7 @@ To use drush and drupal console you will set up separate images and these images
         
         * **private** is a directory for holding the private files in Drupal, but outside the web root (`admin/config/media/file-system`, use `../private`, in D8: settings.php). If you install backup_migrate, you will need it!
     
-    * Following the subsequent steps Docker will create additional directories ***Project*/.log** and ***Project*/.mysql** to hold Apache log files and the Mysql database files, ***Project*/.console** to hold the settings for the Drupal console, ***Project*/.drush** to hold the settings for Drush.
+    * Following the subsequent steps Docker will create additional directories ***Project*/.log** and ***Project*/.mysql** to hold Apache log files and the Mysql database files, ***Project*/.console** to hold the settings for the Drupal console, ***Project*/.drush** to hold the settings for Drush and ***Project*/.sendmail** to collect the mails sent by Drupal (sendmail will be faked)
 
 ### Build the images
 
