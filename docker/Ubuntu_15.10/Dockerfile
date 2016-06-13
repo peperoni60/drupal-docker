@@ -35,10 +35,11 @@ ENV APACHE_RUN_USER www-data \
 EXPOSE 80 443
 
 # Publish volumes
-VOLUME /var/www /etc/php5 /var/log/apache2
+VOLUME /var/www /etc/php5 /var/log/apache2 /sendmail
 
 ADD apache-config.conf /etc/apache2/sites-enabled/000-default.conf
+ADD sendmail.sh /usr/sbin/sendmail
 
 CMD /usr/sbin/apache2ctl -D FOREGROUND
 
-workvol /var/www/docroot
+WORKDIR /var/www/docroot
