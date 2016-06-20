@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# initialize a drupal 8 environment using drush
+# initialize a drupal database
+
 . environment > /dev/null
 
 CONTAINER=$MYSQL_NAME

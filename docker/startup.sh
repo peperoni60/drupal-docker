@@ -3,8 +3,8 @@
 # create the environment file for Docker
 env -i environment | sort > .environment.env
 
-# load the environment variables
-. environment > /dev/null
+# load functions and environment variables
+. functions
 
 # start docker containers
 export COMPOSE_OPTIONS="--env-file=.environment.env"

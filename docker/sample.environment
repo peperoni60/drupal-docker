@@ -51,30 +51,7 @@ env --unset=PWD --unset=SHLVL --unset=_
 export MYSQL_DRUPAL_USER=drupal
 export MYSQL_DRUPAL_DB=drupal
 export MYSQL_DRUPAL_PASSWORD=drupal
-
-
-# set alias to invoke drush and drupal console in a container
-# first set some options
-cd ..
-parentdir="$(pwd)"
-cd docker
-
-workvol="\$(pwd)":/app
-consolevol="${parentdir}/.console:/root/.console"
-drushvol="${parentdir}/.drush:/root/.drush"
-net="${PROJECT_NAME}_dev_net"
-
-alias drush="docker run -i --rm -v $workvol -v $drushvol --net=$net my/drush"
-alias drupal="docker run -i --rm -v $workvol -v $consolevol --net=$net my/drupalconsole"
-
-# prepare some directories to avoid scripts complaining about missing folders
-old_umask=$(umask)
-umask 000
-mkdir "${parentdir}/www" 2> /dev/null
-mkdir "${parentdir}/www/docroot" 2> /dev/null
-mkdir "${parentdir}/www/tmp" 2> /dev/null
-mkdir "${parentdir}/www/private" 2> /dev/null
-mkdir "${parentdir}/www/private/default" 2> /dev/null
-mkdir "${parentdir}/www/private/default/files" 2> /dev/null
-mkdir "${parentdir}/.sendmail" 2> /dev/null
-umask "${old_umask}"
+# site information
+export SITE_NAME=Site-install
+export ADMIN_USER=me
+export ADMIN_PASSWORD=me

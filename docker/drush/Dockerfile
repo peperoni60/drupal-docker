@@ -5,8 +5,8 @@
 FROM drush/drush
 
 # Move drush to a more generic path so it can be used with any image
-RUN mkdir -p /drush && \
-    mv -f /usr/local/bin/drush /drush/drush
+RUN mkdir -p /drush \
+    && mv -f /usr/local/bin/drush /drush/drush
 
 # Volume the drush path so we can use it with other containers
 VOLUME /drush

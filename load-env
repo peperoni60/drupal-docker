@@ -3,9 +3,8 @@
 # do not run this script but source it like
 # . load-env
 #
-cd docker
-. ./environment > /dev/null
-cd ..
+. docker/environment > /dev/null
+. docker/functions
 
 if [ -e ".console/console.rc" ]; then
     . .console/console.rc 2>/dev/null
@@ -20,10 +19,9 @@ if [ -f ".drush/drush.complete.sh" ] ; then
   . .drush/drush.complete.sh
 fi
 
-# Include Drush prompt customizations.
-if [ -f ".drush/drush.prompt.sh" ] ; then
-  . .drush/drush.prompt.sh
-fi
+## Include Drush prompt customizations.
+#if [ -f ".drush/drush.prompt.sh" ] ; then
+#  . .drush/drush.prompt.sh
+#fi
 
-alias drupal
-alias drush
+echo "use \"drush\" and \"drupal\" to call dockerized Drush and Drupal console in Project ${PROJECT_NAME} ($(projectdir))"
