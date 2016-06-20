@@ -259,4 +259,4 @@ In the docker directory you will find a file **watchers.xml**. In PhpStorm go to
 
 **Node**, **npm** and **gulp** are accessible via functions/aliases. Simply call node, npm or gulp on the command line as usual!
 > **Hint**  
-If gulp is not available try npm install gulp to install gulp locally (in the container)
+In most cases you have to install additional requirements to use a node.js project (e.g. in a Zen-theme). Then simply execute `npm install` in a terminal window in PhpStorm (don't forget to change into your node.js-project folder). This will install all needed plugins and utilites into a .bin-directory in your node.js project. `npm install gulp` will make gulp available on the command line. **You can't install gulp globally because there is no global context!** 
