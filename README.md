@@ -215,12 +215,17 @@ To start drush or the drupal console open a terminal in PhpStorm. From the *Proj
 
 > **Tip**  
 > You can automate the loading of the environment by adding the following lines to your `~/.profile`.
-> Thus every time you open a terminal in PhpStorm in this project, the environment is loaded and the aliases/functions are set.
+> Thus every time you open a terminal in PhpStorm in this project or drag a project subfolder into the terminal window, the environment is loaded and the aliases/functions are set.
 ```bash
 # load development environment
+currentdir=$(pwd)
+while [ ! -e "./load-env" ] && [ $(pwd) != "/" ]; do
+  cd ..
+done
 if [ -e "./load-env" ]; then
    . ./load-env
 fi
+cd $currentdir
 ```
 
 > **Tip**  
