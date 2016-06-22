@@ -94,7 +94,7 @@ function drupal()
         --workdir="/app/$(relpath)" \
         --net="${net}" \
         \
-        my/drupal "${@}"
+        my/drupalconsole "${@}"
 }
 
 function node()
