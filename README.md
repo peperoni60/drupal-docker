@@ -61,6 +61,8 @@ These are the minimal steps to take if you set up and work with a project:
 
 6. Start/Stop the containers (regularly, as needed)
 
+If you run into troubles check the chapter **Troubleshooting** below.
+
 
 ## Set up a drupal development project with Docker
 
@@ -116,7 +118,7 @@ Now go into the "docker" folder and copy **sample.environment** to **environment
 
 > Necessary changes are annotated with TODOs in the environment file! 
 
-* **PROJECT_NAME** is used to build the names of Images, Containers and Networks. You should supply a name that is unique within the your machine. It must consist of lower case letters and underscores.
+* **PROJECT_NAME** is used to build the names of Images, Containers and Networks. You should supply a name that is unique within the your machine. It must consist of **lower case letters** and **numbers**, no hyphens, dots or underscores!
 
 * **APACHE_NAME** is the name of the container to be created for Apache/PHP.
 
@@ -218,14 +220,14 @@ To start drush or the drupal console open a terminal in PhpStorm. From the *Proj
 > Thus every time you open a terminal in PhpStorm in this project or drag a project subfolder into the terminal window, the environment is loaded and the aliases/functions are set.
 ```bash
 # load development environment
-__profile_currentdir="$(pwd)"
+pushd "$(pwd)" > /dev/null
 while [ ! -e "./load-env" ] && [ "$(pwd)" != "/" ]; do
   cd ..
 done
 if [ -e "./load-env" ]; then
    . ./load-env
 fi
-cd $__profile_currentdir
+popd > /dev/null
 ```
 
 > **Tip**  
@@ -254,6 +256,16 @@ To move (or share) the development environment to another computer, simply copy 
 
 To **share the definitions** of the project only share the "docker" folder of your project. On the taget machine follow the steps described in chapter "Overview".
 
+## Troubleshooting
+
+If something doesn't work as expected, check this list:
+
+* Are the containers running? In PhpStorm click on the Docker tab (and connect to Docker if necessary). 
+* Try to stop the containers (stop the **startup.sh** session) and delete the containers. Restart the **startup.sh** session. 
+* If conflicts with the network occur, try to delete the network. In a terminal (inside or outside PhpStorm) enter `docker network ls` and then `docker network rm [something_like_PROJECT_NAME]-dev-net`. Then check the value of PROJECT_NAME in the environment file. It must consist of lower case letters and numbers only! If you changed the name, stop and delete the containers, too (see above). Restart **startup.sh** to recreate the network and the containers.
+* Keep in mind that the containers were designed to never hold project specific data that could not be recreated by Docker. So it is always safe to delete containers!
+
+
 ## Bonus
 
 ### SASS compilation
@@ -264,4 +276,4 @@ In the docker directory you will find a file **watchers.xml**. In PhpStorm go to
 
 **Node**, **npm** and **gulp** are accessible via functions/aliases. Simply call node, npm or gulp on the command line as usual!
 > **Hint**  
-In most cases you have to install additional requirements to use a node.js project (e.g. in a Zen-theme). Then simply execute `npm install` in a terminal window in PhpStorm (don't forget to change into your node.js-project folder). This will install all needed plugins and utilites into a .bin-directory in your node.js project. `npm install gulp` will make gulp available on the command line. **You can't install gulp globally because there is no global context!** 
+In most cases you have to install additional requirements to use a node.js project (e.g. in a Zen-theme). Then simply execute `npm install` in a terminal window in PhpStorm (don't forget to change into your node.js-project folder). This will install all needed plugins and utilites into a directory named **node-modules** in your node.js project. `npm install gulp` will make gulp available on the command line. **You can't install gulp globally because there is no global context!** 
