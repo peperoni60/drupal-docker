@@ -4,7 +4,7 @@
 # This script can be sourced from the project dir or from the docker dir inside the project dir.
 # Other directories lead to unpredictable results!
 
-currentdir=$(pwd)
+pushd "$(pwd)" > /dev/null
 if [ $(basename "$(pwd)") != "docker" ]; then
   cd docker
 fi
@@ -22,7 +22,7 @@ drushvol="${projectdir}/.drush:/root/.drush"
 node_version="my/node:latest"
 
 
-cd ${currentdir}
+popd >/dev/null
 
 # @function relpath
 #           determines the relative directory path name of a directory according to a given basedir
@@ -160,4 +160,3 @@ mkdir "${projectdir}/www/private" 2> /dev/null # private files go here (not acce
 mkdir "${projectdir}/www/private/default" 2> /dev/null # similar to the sites structure
 mkdir "${projectdir}/www/private/default/files" 2> /dev/null
 umask "${old_umask}"
-
