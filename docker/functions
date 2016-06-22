@@ -88,6 +88,7 @@ function drupal()
 {
     docker run \
         --interactive \
+        --tty \
         --rm \
         --volume="${appdir}":/app \
         --volume="${projectdir}/.console:/root/.console" \
