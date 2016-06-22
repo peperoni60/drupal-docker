@@ -160,4 +160,5 @@ mkdir "${projectdir}/www/config/default/sync" 2> /dev/null
 mkdir "${projectdir}/www/private" 2> /dev/null # private files go here (not accessible by the browser!)
 mkdir "${projectdir}/www/private/default" 2> /dev/null # similar to the sites structure
 mkdir "${projectdir}/www/private/default/files" 2> /dev/null
+mkdir "${projectdir}/www/private/default/files/backup_migrate" 2> /dev/null # it can't do it itself ?!
 umask "${old_umask}"
