@@ -8,7 +8,10 @@ The first question you could ask would just be this: "Why in the hell should I u
 With Docker you can create containers holding project specific data while they depend on common images. You can even copy whole development environments from one machine to another or only share the settings of a development environment with others. I investigated Docker and created a checklist and some scripts to create Docker-based Drupal development environments and to interact with Docker containers. As I am on Linux, it was developed and tested on Linux. But I am sure it will run on Mac and Windows in a similar way.  
 
 > It is reported that it is simple to run with **Docker for Mac** native Docker Server (at least Version 1.12.0-rc4-beta20) although in this case you may choose not to install *Intellijet*'s Mac **PHPStorm** Docker integration plugin which is aimed at `docker-machine` and so won't offer its full Docker *Tools* benefits.   
-Mac  **PHPStorm** users select a shell script and click `⌃⇧R` (Shift+control+R) to run it.
+Notes for Mac:    
+-  Mac  **PHPStorm** users 1) select a shell script and 2) click `⌃⇧R`  to run it (Shift+control+R and not Ctrl+Shift+F10).
+-  *Docker for Mac* does not require *VirtualBox*, it is implemented natively with `macOS HyperKit`.
+-  `docker-machine` would require *VirtualBox*.
 
 I also use **PhpStorm** (https://www.jetbrains.com/phpstorm/) for development so I describe it from this point of view. Im also sure you can adapt my explanations to other development tools, too.
 
@@ -170,13 +173,15 @@ In PhpStorm you can now easily add a run configuration with startup.sh. From the
     sudo ./addhost.sudo.sh
     ```
     This will do the job.
-    
+    (Not required for *Docker for Mac*: see below.)
+
 
 ### Install Drupal website with default values
 
 
 To install a Drupal website with default values execute the script **drush-si.sh** in PhpStorm (mark `drush-si.sh`, then press Ctrl+Shift+F10). This will download Drupal if necessary, create a database if necessary, install Drupal within this database and open the site in your browser. 
-> To manually open your new site point your browser at “http://*APACHE_HOSTNAME*” (or “http://*APACHE_IP*” if you could not change /etc/hosts).
+> To manually open your new site point your browser at “http://*APACHE_HOSTNAME*” (or “http://*APACHE_IP*” if you could not change /etc/hosts).  
+But point to "localhost" when running *Docker for Mac* which does not offer a mapping of `docker-composer`'s `ipv4_address` in the Docker Server. Because of the way networking is implemented in *Docker for Mac*, you cannot see a docker0 interface in macOS. This interface is actually within *HyperKit*.
      
 ### Install Drupal with custom values
 
