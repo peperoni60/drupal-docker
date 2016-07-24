@@ -43,7 +43,8 @@ export APACHE_IP=${subnet}.100
 export MYSQL_IP=${subnet}.101
 
 # Echo the values set above to create an environment file for use by Docker:
-env --unset=PWD --unset=SHLVL --unset=_
+unset PWD SHLVL _
+env 
 
 # Site install defaults
 # ----------------------
