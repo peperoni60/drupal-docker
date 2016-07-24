@@ -7,6 +7,9 @@ The first question you could ask would just be this: "Why in the hell should I u
 
 With Docker you can create containers holding project specific data while they depend on common images. You can even copy whole development environments from one machine to another or only share the settings of a development environment with others. I investigated Docker and created a checklist and some scripts to create Docker-based Drupal development environments and to interact with Docker containers. As I am on Linux, it was developed and tested on Linux. But I am sure it will run on Mac and Windows in a similar way.  
 
+> It is reported that it is simple to run with **Docker for Mac** native Docker Server (at least Version 1.12.0-rc4-beta20) although in this case you may choose not to install *Intellijet*'s Mac **PHPStorm** Docker integration plugin which is aimed at `docker-machine` and so won't offer its full Docker *Tools* benefits.   
+Mac  **PHPStorm** users select a shell script and click `⌃⇧R` (Shift+control+R) to run it.
+
 I also use **PhpStorm** (https://www.jetbrains.com/phpstorm/) for development so I describe it from this point of view. Im also sure you can adapt my explanations to other development tools, too.
 
 > ### **You don't need to install apache, php or mysql on the computer to run this development environment!** The only requirement is to install Docker (see below).
