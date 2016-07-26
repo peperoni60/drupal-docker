@@ -4,7 +4,7 @@ It is simple to run with the *Docker for Mac* native Docker Server (at least Ver
 
 Notes for Mac:    
 
-*  Mac  **PHPStorm** users 1) select a shell script and 2) click `⌃⇧R`  to run it (Shift+control+R and not `⌃⇧R`).
+*  Mac  **PHPStorm** users 1) select a shell script and 2) click `⇧^R`  to run it (Shift+control+R and not `⇧^R`).
 -  *Docker for Mac* does not require *VirtualBox*, it is implemented natively with *macOS HyperKit*.
 -  `docker-machine` would require *VirtualBox*.
 
@@ -54,7 +54,7 @@ This fork is adapted (with only *very* few minor changes to `peperoni60`'s base)
     
 -  Go to  *PHPStorm→Preferences→Build Execution Deployment→Docker* and click **+** to define a _Docker Server_.
     -  Name the server
-    -  Specify `unix:/http://localhost:2376` as  the _API URL_.
+    -  Specify `http://localhost:2376` as  the _API URL_.
     -  Specify `/Users/<my Mac user>/.docker/machine/certs` as the
        _Certificates folder_ 
     -  Leave the default value `docker-compose` as is
@@ -79,28 +79,24 @@ These are the minimal steps to take if you set up and work with a project:
 
 ## Set up a drupal development project with Docker
 
-This instructions guide you through setting up a _Drupal_ development project with one project-specific container for Apache/PHP, one project specific container for Mysql. Both containers run in a project-specific network. All the project files (PHP, other files, Mysql database files) will be stored locally (that means: on the host's file system) and not within the containers. Thus the containers could be deleted and recreated as needed without losing data.
+These instructions guide us through setting up a _Drupal_ development project with the following character:  
+
+-  One project-specific container for _Apache/PHP_, 
+-  One project specific container for _Mysql_. 
+-  Both containers run in a project-specific network. 
+-  All the project files (_PHP_, other files, _Mysql_ database files) will be stored locally (that means: on the host's file system) and not within the containers. Thus the containers could be deleted and recreated as needed without losing data.
+
 
 To use _drush_ and _drupal console_ we will set up separate images and these images are used by `docker` to create containers on the fly when needed. 
-> The reason why you set up your own images is: you need to volume the
-> _drush_ and _drupal console_ settings (`.drush`; `.console` directories) and, as
-> they run as root inside, change the default umode 022 (read, write by
-> owner, read only by others) to 000 (read/write to all). Thus the user
-> www-data in the apache container is able to write into directories
-> that are not owned by www-data. This is not a security issue, as we
-> work locally and use private networks only.
+> The reason why we set up your own images is: we need to volume the _drush_ and _drupal console_ settings (in the `.drush`; `.console` directories) and, as they run as `root` inside, we change the default `umode 022` (read, write by owner, read only by others) to `000` (read/write to all).
+ Thus the user `www-data` in the _apache_ container is able to write into directories that are not owned by `www-data`. This is not a security issue, as we work locally and use private networks only.
 
 **So, let's go!**
  
-> In this section the following instructions use **_bold italic_** text as
-> placeholders. Replace these placeholders with real values when
-> following the instructions.
+* Create a new empty project directory *Project* in PhpStorm (File→New Project→Empty Project) using your choice of value for *Project*.
 
-* Create a new empty project *Project* in PhpStorm (File→New Project→Empty Project).
-
-* Clone or download
-  [the repo who's _README_ we're reading](https://github.com/iainhouston/drupal-docker)
-  into this *Project*.
+* Clone or download   [the repo who's _README_ we're reading](https://github.com/iainhouston/drupal-docker)
+  into the *Project* directory.
 
 * We will get this directory structure:
     * *Project*
@@ -114,31 +110,41 @@ To use _drush_ and _drupal console_ we will set up separate images and these ima
             * docroot
             * tmp
             * private
-               
-    * The name of **_Project_** can be chosen as you like.
-    
+                   
     * _docker_ contains build files and utilities for Docker
     
     * _www_ and subsequent directories will be created automatically during installation
     
         * _docroot_ is the root folder for Apache. Here all PHP-files and user created files will reside.
         
-        * **tmp** is a directory for temporary files. It can be used as tmp-directory in Drupal (`admin/config/media/file-system`, use `../tmp`)
+        * _tmp_ is a directory for temporary files. It can be used as tmp-directory in Drupal (`admin/config/media/file-system`, use `../tmp`)
         
-        * **private** is a directory for holding the private files in Drupal, but outside the web root (`admin/config/media/file-system`, use `../private`, in D8: settings.php). If you install backup_migrate, you will need it!
+        * _private_ is a directory for holding the private files in _Drupal_, but outside the web root (`admin/config/media/file-system`, use `../private`, in D8: settings.php). If you install the Drupal `backup_migrate`module , you will need it.
     
-    * Following the subsequent steps Docker will create additional directories ***Project*/.log** and ***Project*/.mysql** to hold Apache log files and the Mysql database files, ***Project*/.console** to hold the settings for the Drupal console, ***Project*/.drush** to hold the settings for Drush and ***Project*/.sendmail** to collect the mails sent by Drupal (sendmail will be faked)
+    * Following subsequent steps Docker will create additional directories 
+        * _Project/_.log and _Project/_.mysql to hold _Apache_ log files and the _Mysql_ database files, 
+        * _Project/_.console to hold the settings for the _drupal console_, 
+        * _Project/_.drush to hold the settings for _Drush_ and
+        * _Project/_.sendmail to collect the mails sent by Drupal (`sendmail` will be faked)
 
 ### Build the images
 
-If this is your first project at all, you should build the images we need.
-In PhpStorm run the scripts **build.sh** in docker/drupalconsole, docker/drush, docker/node.js, docker/Ubuntu_15.10, docker/Ubuntu_16.04 (select `build.sh`, then press `⌃⇧R`). These Images will be used in this project and reused in later projects.
+Several of the _Docker_ images are shared across multiple projects. For our first project, we'll build the images we need.
+In _PhpStorm_ run the scripts `build.sh` in  each of the following directories:
+
+-  `docker/drupalconsole`; 
+-  `docker/drush`; 
+-  `docker/node.js`; 
+-  `docker/Ubuntu_15.10`; 
+-  `docker/Ubuntu_16.04` 
+
+In each case select `build.sh`, then press `⇧^R`). These Images will be used in this project and reused in later projects.
 
 ### Set up the environment
 
-Now go into the "docker" folder and copy **sample.environment** to **environment**. This file holds environment variables to pass to docker during compose and aliases to be used on the command line:     
+Now go into the `docker` directory and copy `sample.environment` to `environment`. This file holds environment variables to pass to `docker-compose`, and aliases to be used on the command line as follows: 
 
-> Necessary changes are annotated with TODOs in the environment file! 
+> Necessary changes are annotated with **TODO**s in the `environment` file 
 
 * **PROJECT_NAME** is used to build the names of Images, Containers and Networks. You should supply a name that is unique within the your machine. It must consist of lower case letters and underscores.
 
@@ -150,11 +156,13 @@ Now go into the "docker" folder and copy **sample.environment** to **environment
     
     * my/ubuntu:16.04: Apache 2 with PHP 7.0
     
-* **APACHE_HOSTNAME** is the domain name, which could be later added to /etc/hosts. You can then us this name to open your website in a browser. **The name has to be unique within the Docker host!**
+* **APACHE_HOSTNAME** is the domain name, which could be later added to `/etc/hosts`. You can then us this name to open your website in a browser.  
+> The name has to be unique within the Docker host! 
+> It may be  possible to route an IP address to the *Docker for Mac* Server but not with the "bridge" driver as used here. Watch this space! In the meantime use *localhost*
 
 * **MYSQL_NAME** is the name of the container to be created for Mysql.
 
-* **MYSQL_IMAGE** is the name of the image to create the Mysql container of. Normally it is not necessary to modify this entry.
+* **MYSQL_IMAGE** is the name f the image to create the Mysql container of. Normally it is not necessary to modify this entry.
 
 * **MYSQL_HOSTNAME** is the host name of the Mysql container which could be later added to /etc/hosts. In PhpStorm you can then connect to the database using this name instead of using the IP address (remember: Mysql is not running on the local host and we do not redirect ports). 
 
@@ -181,7 +189,7 @@ Now go into the "docker" folder and copy **sample.environment** to **environment
 
 Now you can create the containers and the network for this project. 
 
-* In PhpStorm start the script **startup.sh** in the "docker" folder (select `startup.sh`, then press `⌃⇧R`). When the containers are running (you can control it in PhpStorm by clicking on the Docker-tab at the lower left border) you can take the next steps.
+* In PhpStorm start the script **startup.sh** in the "docker" folder (select `startup.sh`, then press `⇧^R`). When the containers are running (you can control it in PhpStorm by clicking on the Docker-tab at the lower left border) you can take the next steps.
 > **Tip**  
 In PhpStorm you can now easily add a run configuration with startup.sh. From the "Run" menu select "Edit Configurations", select the entry "startup.sh" and save it (click on the diskette-icon). If you then go to File→Settings→Tools→Startup Tasks you can add startup.sh to the list to start/stop the containers when you open/close the PhpStorm project. 
 
@@ -198,7 +206,7 @@ In PhpStorm you can now easily add a run configuration with startup.sh. From the
 
 
 To install a Drupal website with default values execute the script
-**drush-si.sh** in PhpStorm (select `drush-si.sh`, then press `⌃⇧R` to
+**drush-si.sh** in PhpStorm (select `drush-si.sh`, then press `⇧^R` to
 run it). This will download Drupal if necessary, create a database if
 necessary, install Drupal within this database and open the site in your
 browser.
@@ -207,10 +215,10 @@ But point to "localhost" when running *Docker for Mac* which does not offer a ma
      
 ### Install Drupal with custom values
 
-To download Drupal 7 or Drupal 8, execute the script **download_druspl7.sh** or **download_drupal8.sh** in PhpStorm (select the script, then press `⌃⇧R`). This will prepare the docroot with writable "custom" folders in the "modules" and the "themes" folder.
+To download Drupal 7 or Drupal 8, execute the script **download_druspl7.sh** or **download_drupal8.sh** in PhpStorm (select the script, then press `⇧^R`). This will prepare the docroot with writable "custom" folders in the "modules" and the "themes" folder.
 > **All files and directories in www/docroot will be deleted!**
 
-* You want to use mysql as the database server have to create the database for Drupal by running the script **create_mysql_drupal_db.sh** in PhpStorm (select `create_mysql_drupal_db.sh`, then press `⌃⇧R`). **A database with same name will be dropped and recreated!**. If you want to use sqlite yu can skip this step.
+* You want to use mysql as the database server have to create the database for Drupal by running the script **create_mysql_drupal_db.sh** in PhpStorm (select `create_mysql_drupal_db.sh`, then press `⇧^R`). **A database with same name will be dropped and recreated!**. If you want to use sqlite yu can skip this step.
     > **Tip**
     > To interact with the terminal window you have to click into it until you see a blinking cursor!
 
