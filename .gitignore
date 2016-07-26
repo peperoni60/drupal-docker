@@ -4,4 +4,6 @@ www/
 .log/
 .drush/
 .mysql/
-environment
+docker/environment
+docker/.environment.env
+.idea/workspace.xml
