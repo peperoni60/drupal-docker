@@ -2,12 +2,6 @@
 
 It is simple to run with the *Docker for Mac* native Docker Server (at least Version 1.12.0-rc4-beta20 as I write). I do not describe development with `docker-machine` which  would then  require *VirtualBox*.  
 
-Notes for Mac:    
-
-*  Mac  **PHPStorm** users 1) select a shell script and 2) click `⇧^R`  to run it (Shift+control+R and not `⇧^R`).
--  *Docker for Mac* does not require *VirtualBox*, it is implemented natively with *macOS HyperKit*.
--  `docker-machine` would require *VirtualBox*.
-
 This *README* goes into some detail regarding the use of **PhpStorm** (https://www.jetbrains.com/phpstorm/) for development so I describe it from this point of view, but this repo wraps up a  lot of very useful that can be used simply from the command line.
 
 So: you definitely don't need  *VirtualBox*; *Apache*; *php*; or *MySQL* installed on your Mac to run this development environment. The only *requirement* is to have *Docker for Mac* and  `homebrew` installed. 
