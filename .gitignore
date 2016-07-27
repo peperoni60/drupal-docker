@@ -1,0 +1,9 @@
+.DS_Store
+www/
+.sendmail/
+.log/
+.drush/
+.mysql/
+docker/environment
+docker/.environment.env
+.idea/workspace.xml

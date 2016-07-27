@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 
 # create the environment file for Docker
-env -i environment | sort > .environment.env
+env -i ./environment | sort > .environment.env
+
+echo "COMPOSE_OPTIONS ============================"
+cat .environment.env
 
 # load functions and environment variables
 . functions

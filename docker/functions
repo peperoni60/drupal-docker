@@ -142,6 +142,10 @@ alias drupal=drupal # if scripts require an alias
 alias node=node # if scripts require an alias
 alias npm=npm # if scripts require an alias
 alias gulp=gulp # if scripts require an alias
+alias env=genv # Use Gnu 's `env` for this project
+
+# workaround for Mac phpstorm Docker Integration plugin's API URL: http://localhost:2376
+alias socat="socat TCP-LISTEN:2376,reuseaddr,fork UNIX-CONNECT:/var/run/docker.sock"
 
 # prepare the directories to set ownership and access rights and to avoid scripts complaining about missing folders
 old_umask=$(umask)

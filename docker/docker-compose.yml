@@ -13,6 +13,9 @@ services:
   apache2:
     container_name: $APACHE_NAME
     image: $APACHE_IMAGE
+    ports:
+      - 80:80
+      - 443:443
     volumes:
       - ../www:/var/www
       - ../.log:/var/log/apache2
