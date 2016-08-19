@@ -1,0 +1,89 @@
+# Template file for use in drupal projects
+version: '2'
+services:
+# Define the containes for the services and expose the most important volumes:
+  db:
+    container_name: $DB_NAME
+    image: $DB_IMAGE
+    environment:
+      MYSQL_ROOT_PASSWORD: $DB_ROOT_PASSWORD
+      MYSQL_DATABASE: $DB_DRUPAL_DB
+      MYSQL_USER: $DB_DRUPAL_USER
+      MYSQL_PASSWORD: $DB_DRUPAL_PASSWORD
+    volumes:
+      - ../docker-runtime/mysql:/var/lib/mysql
+      - ../docker-runtime/mysql-init:/docker-entrypoint-initdb.d # Place init .sql file(s) here
+    networks:
+      dev_net:
+        ipv4_address: $DB_IP
+
+  php:
+    container_name: $PHP_NAME
+    image: $PHP_IMAGE
+    environment:
+      PHP_SENDMAIL_PATH: /usr/sbin/sendmail -t -i -S mailhog:1025
+      PHP_XDEBUG_ENABLED: $PHP_XDEBUG_ENABLED
+      PHP_HOST_NAME: $WEB_DOMAIN
+      PHP_SITE_NAME: dev # drush alias name
+    volumes:
+      - ../www/:/var/www/html
+      - ../docker-runtime/drush:/home/www-data/.drush
+      - ../docker-runtime/drush-backups:/home/www-data/drush-backups
+      - ../docker-runtime/console:/home/www-data/.console
+    working_dir: /var/www/html/docroot
+    extra_hosts:
+      - "$WEB_DOMAIN:$WEB_IP"
+      - "$DB_DOMAIN:$DB_IP"
+    networks:
+      dev_net:
+
+  web:
+    container_name: $WEB_NAME
+    image: $WEB_IMAGE
+    environment:
+      NGINX_SERVER_NAME: localhost
+      NGINX_UPSTREAM_NAME: php
+      NGINX_DOCROOT: docroot # Relative path inside the /var/www/html/ directory.
+      DRUPAL_VERSION: $DRUPAL_VERSION
+    volumes_from:
+      - php
+    extra_hosts:
+      - "$WEB_DOMAIN:127.0.0.1"
+      - "$DB_DOMAIN:$DB_IP"
+    networks:
+      dev_net:
+        ipv4_address: $WEB_IP
+
+  mail:
+    container_name: $MAIL_NAME
+    image: $MAIL_IMAGE
+    environment:
+      MH_API_BIND_ADDR: "0.0.0.0:80"
+      MH_UI_BIND_ADDR: "0.0.0.0:80"
+    expose:
+      - "80"
+    networks:
+      dev_net:
+        ipv4_address: $MAIL_IP
+
+  pma:
+    container_name: $PMA_NAME
+    image: $PMA_IMAGE
+    environment:
+      PMA_HOST: database
+      PMA_USER: root
+      PMA_PASSWORD: $DB_ROOT_PASSWORD
+      PHP_UPLOAD_MAX_FILESIZE: 1G
+      PHP_MAX_INPUT_VARS: 1G
+    networks:
+      dev_net:
+        ipv4_address: $PMA_IP
+
+networks:
+  dev_net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: $NET_SUBNET
+        gateway: $NET_GATEWAY

@@ -1,0 +1,119 @@
+#!/usr/bin/env bash
+# Environment file to start/create named docker containers.
+#################################################################################
+# Copy this file to the "docker" directory and adjust the values to your needs. #
+#################################################################################
+# - The network settings are used to separate the virtual networks from
+#   one another and to have known IP-addresses for the hosts that can be
+#   used in the /etc/hosts file. The subnet addresses must be unique on
+#   the host, thus they must be adjusted per project.
+
+# With this variables, the names of all containers, networks and host/domainnames are built. They must be unique on the host machine.
+#
+# @TODO: change PROJECT_NAME_PLAIN (letters and numbers only)
+export PROJECT_NAME_PLAIN=myname
+# @TODO: change PROJECT_NAME (letters, numbers, dashes, dots, underscores, no whitespace)
+export PROJECT_NAME=my-name
+# @TODO: Networking: change the 3rd octet of IP-addresses
+subnet=172.16.1
+# @TODO: Drupal version (7 or 8)
+export DRUPAL_VERSION=8
+# @TODO: choose php version (7.0 or 5.6)
+export PHP_VERSION=7.0 # Allowed: 7.0, 5.6.
+# @TODO: choose wether xdebug is enabled(1) or not (0)
+export PHP_XDEBUG_ENABLED=0
+
+domain=${PROJECT_NAME_PLAIN}.local
+unset SUBDOMAINS
+
+# service: php
+service=php
+# the container name:
+export PHP_NAME=${PROJECT_NAME_PLAIN}_${service}
+# the image to build the container from:
+export PHP_IMAGE=wodby/drupal-php:${PHP_VERSION}
+SUBDOMAINS="${SUBDOMAINS} ${service}"
+
+# service: web
+service=web
+# the container name:
+export WEB_NAME=${PROJECT_NAME_PLAIN}_${service}
+# the image to build the container from:
+export WEB_IMAGE=wodby/drupal-nginx
+# The host name to add to /etc/hosts. It must be unique on the host machine
+export WEB_DOMAIN=web.${domain}
+SUBDOMAINS="${SUBDOMAINS} ${service}"
+
+# service: db
+service=db
+# the container name:
+export DB_NAME=${PROJECT_NAME_PLAIN}_${service}
+# the image to build the container from:
+export DB_IMAGE=wodby/drupal-mariadb
+# the host to add to /etc/hosts. It must be unique on the host machine
+export DB_DOMAIN=${service}.${domain}
+# the db root password:
+export DB_ROOT_PASSWORD=drootpal
+# credentials for the Drupal database:
+export DB_DRUPAL_USER=drupal
+export DB_DRUPAL_DB=drupal
+export DB_DRUPAL_PASSWORD=drupal
+SUBDOMAINS="${SUBDOMAINS} ${service}"
+
+# service: mail
+service=mail
+# the container name:
+export MAIL_NAME=${PROJECT_NAME_PLAIN}_${service}
+# the image to build the container from
+export MAIL_IMAGE=mailhog/mailhog
+# the host to add to /etc/hosts. It must be unique on the host machine
+export MAIL_DOMAIN=${service}.${domain}
+SUBDOMAINS="${SUBDOMAINS} ${service}"
+
+# service: pma
+service=pma
+# the container name:
+export PMA_NAME=${PROJECT_NAME_PLAIN}_${service}
+# the image to build the container from
+export PMA_IMAGE=phpmyadmin/phpmyadmin
+# the host to add to /etc/hosts. It must be unique on the host machine
+export PMA_DOMAIN=${service}.${domain}
+SUBDOMAINS="${SUBDOMAINS} ${service}"
+
+export NET_SUBNET=${subnet}.0/24
+export NET_GATEWAY=${subnet}.1
+i=100
+typeset -u prefix
+for prefix in $SUBDOMAINS; do
+    export ${prefix}_IP=${subnet}.$i
+    i=$((i + 1))
+done
+
+# Echo the values set above to create an environment file for use by Docker:
+unset PWD SHLVL
+env
+
+# -----------------------------------------------------------
+# The services/subdomains list
+export SUBDOMAINS="$SUBDOMAINS"
+
+# some Docker variables
+export DOCKER_ENV=$(pwd)/.docker.env
+export COMPOSE_OPTIONS="--env-file=${DOCKER_ENV}"
+export DOCKER_PROJECT_NAME="${PROJECT_NAME_PLAIN}"
+
+# UserId of user www-data in containers
+export WEB_USER=82
+
+# Images for services used on demand
+export NODE_IMAGE="node:6-slim"
+
+# Wether to show the greeting (1) or not (other value)
+export GREETING=1
+
+# Site install defaults
+# ----------------------
+# site information
+export SITE_NAME=$PROJECT_NAME
+export ADMIN_USER=me
+export ADMIN_PASSWORD=me

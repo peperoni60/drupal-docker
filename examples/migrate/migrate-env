@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# include migration environment
+
+# include basic functions and environment
+. ../docker/functions
+
+# some functions instead of variables
+function module_name() {
+    echo "custom_migration"
+}
+function module_basedir() {
+    echo modules/custom
+}
+function module_dir() {
+    echo "www/docroot/$(module_basedir)/$(module_name)"
+}
+function app_legacy_root() {
+    echo docroot
+}
+function legacy_root {
+    echo "$(projectdir)/www/$(app_legacy_root)"
+}
+function backup_file() {
+    echo "/app/tmp/dbbackup.sql"
+}

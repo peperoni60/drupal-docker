@@ -1,3 +1,5 @@
+@TODO: add comment about mappings between containers and local file system
+
 #  Drupal-Docker Development
 
 ## Why use Docker?
@@ -118,7 +120,7 @@ Now go into the "docker" folder and copy **sample.environment** to **environment
 
 > Necessary changes are annotated with TODOs in the environment file! 
 
-* **PROJECT_NAME** is used to build the names of Images, Containers and Networks. You should supply a name that is unique within the your machine. It must consist of **lower case letters** and **numbers**, no hyphens, dots or underscores!
+* **PROJECT_NAME_PLAIN** is used to build the names of Images, Containers and Networks. You should supply a name that is unique within the your machine. It must consist of **lower case letters** and **numbers**, no hyphens, dots or underscores!
 
 * **APACHE_NAME** is the name of the container to be created for Apache/PHP.
 
@@ -252,7 +254,7 @@ If more than one shell-tab is open for that container, PhpStorm has problems to 
 
 ### Moving/sharing the development environment
 
-To move (or share) the development environment to another computer, simply copy the project folder. If necessary make some adjustments to **PROJECT_NAME** and/or **subnet** in file **environment**. Make sure, Docker and PhpStorm is installed and then run the **build.sh** scripts to create the images, run **addhost.sh** as root (sudo) and then execute **startup.sh** in PhpStorm.
+To move (or share) the development environment to another computer, simply copy the project folder. If necessary make some adjustments to **PROJECT_NAME_PLAIN** and/or **subnet** in file **environment**. Make sure, Docker and PhpStorm is installed and then run the **build.sh** scripts to create the images, run **addhost.sh** as root (sudo) and then execute **startup.sh** in PhpStorm.
 
 To **share the definitions** of the project only share the "docker" folder of your project. On the taget machine follow the steps described in chapter "Overview".
 
@@ -262,7 +264,7 @@ If something doesn't work as expected, check this list:
 
 * Are the containers running? In PhpStorm click on the Docker tab (and connect to Docker if necessary). 
 * Try to stop the containers (stop the **startup.sh** session) and delete the containers. Restart the **startup.sh** session. 
-* If conflicts with the network occur, try to delete the network. In a terminal (inside or outside PhpStorm) enter `docker network ls` and then `docker network rm [something_like_PROJECT_NAME]-dev-net`. Then check the value of PROJECT_NAME in the environment file. It must consist of lower case letters and numbers only! If you changed the name, stop and delete the containers, too (see above). Restart **startup.sh** to recreate the network and the containers.
+* If conflicts with the network occur, try to delete the network. In a terminal (inside or outside PhpStorm) enter `docker network ls` and then `docker network rm [something_like_PROJECT_NAME_PLAIN]-dev-net`. Then check the value of PROJECT_NAME_PLAIN in the environment file. It must consist of lower case letters and numbers only! If you changed the name, stop and delete the containers, too (see above). Restart **startup.sh** to recreate the network and the containers.
 * Keep in mind that the containers were designed to never hold project specific data that could not be recreated by Docker. So it is always safe to delete containers!
 
 
