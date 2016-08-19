@@ -7,35 +7,32 @@
 
 . environment > /dev/null
 
-HOSTSNEW=../www/tmp/hosts
-HOSTS=/etc/hosts
-cat $HOSTS > ${HOSTSNEW}
-rm ${HOSTSNEW}.tmp 2> /dev/null
-
-if [ ! -z "$APACHE_HOSTNAME" ]
-    then
-    grep -v "$APACHE_HOSTNAME" $HOSTSNEW > ${HOSTSNEW}.tmp
-    mv ${HOSTSNEW}.tmp $HOSTSNEW
-    if [ ! -z "$APACHE_IP" ]
+echo "SUBDOMAINS=$SUBDOMAINS"
+hostsnew=..hosts
+hosts=/etc/hosts
+cat $hosts > ${hostsnew}
+rm ${hostsnew}.tmp 2> /dev/null
+typeset -u prefix
+for prefix in $SUBDOMAINS
+do
+    domain=${prefix}_DOMAIN
+    ip=${prefix}_IP
+    if [ ! -z "${!domain}" ]
         then
-        echo "$APACHE_IP" "$APACHE_HOSTNAME" >> ${HOSTSNEW}
+        grep -v "${!domain}" ${hostsnew} > ${hostsnew}.tmp
+        mv ${hostsnew}.tmp ${hostsnew}
+        if [ ! -z "${!ip}" ]
+            then
+            echo "${!ip}" "${!domain}" >> ${hostsnew}
+        fi
     fi
-fi
+done
 
-if [ ! -z "$MYSQL_HOSTNAME" ]
-    then
-    grep -v "$MYSQL_HOSTNAME" $HOSTSNEW > ${HOSTSNEW}.tmp
-    mv ${HOSTSNEW}.tmp $HOSTSNEW
-    if [ ! -z "$MYSQL_IP" ]
-        then
-        echo "$MYSQL_IP" "$MYSQL_HOSTNAME" >> ${HOSTSNEW}
-    fi
-fi
+cat $hosts > ${hosts}.backup
+cat $hostsnew > $hosts
+rm $hostsnew
 
-cat $HOSTSNEW > $HOSTS
-rm $HOSTSNEW
-
-echo "New $HOSTS file:"
-cat $HOSTS
+echo "New $hosts file:"
+cat $hosts
 
 

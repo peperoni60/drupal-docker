@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# load the environment to work with drush and drupal containers
+# do not run this script but source it like
+# . load-env
+#
+pushd "$(pwd)" > /dev/null
+if [ $(basename "$(pwd)") != "docker" ]; then
+    cd docker
+fi
+
+. functions
+
+if [ -e "../docker-runtime/console/console.rc" ]; then
+    . ../docker-runtime/console/console.rc 2>/dev/null
+fi
+
+if [ -f "../docker-runtime/drush/drush.bashrc" ] ; then
+    . ../docker-runtime/drush/drush.bashrc
+fi
+
+# Include Drush completion.
+if [ -f "../docker-runtime/drush/drush.complete.sh" ] ; then
+    . ../docker-runtime/drush/drush.complete.sh
+fi
+
+## Include Drush prompt customizations.
+#if [ -f "../docker-runtime/drush/drush.prompt.sh" ] ; then
+#    . ../docker-runtime/drush/drush.prompt.sh
+#fi
+
+if [ "${GREETING}"="1" ]; then
+    fhelp
+fi
+popd >/dev/null

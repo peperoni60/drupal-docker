@@ -1,14 +1,10 @@
 #!/usr/bin/env bash
 
-# create the environment file for Docker
-env -i environment | sort > .environment.env
-
 # load functions and environment variables
 . functions
 
+# give a name to the container of docker-compose (if run as Docker container)
+export DOCKER_RUN_OPTIONS="--name=${PROJECT_NAME_PLAIN}_startup"
 # start docker containers
-export COMPOSE_OPTIONS="--env-file=.environment.env"
-docker-compose --project-name "$PROJECT_NAME" up
+docker-compose --project-name "$PROJECT_NAME_PLAIN" up
 
-# cleanup
-rm .environment.env 2> /dev/null
