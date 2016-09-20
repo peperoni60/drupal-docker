@@ -54,6 +54,13 @@ function web_tmp()
 {
     echo "/var/www/html/tmp"
 }
+# @function web_workdir
+#           returns the path of the web working dir in the web container
+function web_workdir()
+{
+    echo "/var/www/html/$WWW_WORKDIR"
+}
+
 # @function tty_option
 #           returns --tty if interactive
 # @usage    tty_option
@@ -68,13 +75,15 @@ function tty_option() {
 # @usage    _php [commands...]
 function _php()
 {
-    export DOCKER_RUN_OPTIONS="--name=${PROJECT_NAME_PLAIN}_tmp_php_$(date +%H%M%S) --workdir=$(web_docroot)"
     docker-compose \
         --project-name "$PROJECT_NAME_PLAIN" \
         -f $(projectdir)/docker/docker-compose.yml \
-        exec \
-        --user="${WEB_USER}" \
-        php "${@}"
+        run \
+        --name=${PROJECT_NAME_PLAIN}_tmp_php_$(date +%H%M%S) \
+        --rm \
+        --user="${WWW_USER}" \
+        --workdir="$(web_workdir)" \
+        $PHP_SERVICE "${@}"
 }
 # @function php
 #           calls a shell in the php container or a php command
@@ -87,7 +96,16 @@ function php()
         _php php "${@}"
     fi
 }
-
+# @function phproot
+#           executes a shell command in the php container as root user
+# @usage    phproot shell-command
+function phproot()
+{
+    web_user=$WWW_USER
+    WWW_USER=0
+    _php sh -c "${@}"
+    WWW_USER=$web_user
+}
 # @function drush
 #           calls dockerized drush for the current project. It uses the current directory as
 #           working directory.
@@ -115,7 +133,6 @@ function composer()
     _php composer "${@}"
 }
 
-
 function node()
 {
     docker run \
@@ -124,7 +141,7 @@ function node()
         --rm \
         --volume="$(pwd)":/usr/src/app \
         --workdir=/usr/src/app \
-        --user="${WEB_USER}" \
+        --user="${WWW_USER}" \
         ${NODE_IMAGE} \
         \
         node "${@}"
@@ -138,7 +155,7 @@ function npm()
         --rm \
         --volume="$(pwd)":/usr/src/app \
         --workdir=/usr/src/app \
-        --user="${WEB_USER}" \
+        --user="${WWW_USER}" \
         ${NODE_IMAGE} \
         \
         npm "${@}"
@@ -152,7 +169,7 @@ function gulp()
         --rm \
         --volume="$(pwd)":/usr/src/app \
         --workdir=/usr/src/app \
-        --user="${WEB_USER}" \
+        --user="${WWW_USER}" \
         ${NODE_IMAGE} \
         \
         gulp "${@}"
@@ -162,10 +179,10 @@ function fhelp()
 {
     printf "
 You can user following commands to call dockerized utilities in Project \e[1m${PROJECT_NAME}\e[0m:
-\e[1mphp\e[0m       to open a shell in the php container, as user ${WEB_USER}
-\e[1mdrush\e[0m     to call drush in the php container, as user ${WEB_USER}
-\e[1mdrupal\e[0m    to call the drupal console in the php container, as user ${WEB_USER}
-\e[1mcomposer\e[0m  to call composer in the php container, as user ${WEB_USER}
+\e[1mphp\e[0m       to open a shell in the php container, as user ${WWW_USER}
+\e[1mdrush\e[0m     to call drush in the php container, as user ${WWW_USER}
+\e[1mdrupal\e[0m    to call the drupal console in the php container, as user ${WWW_USER}
+\e[1mcomposer\e[0m  to call composer in the php container, as user ${WWW_USER}
 \e[1mnode\e[0m      to create a node.js container and execute a node.js command
 \e[1mnpm\e[0m       to create a node.js container and execute a npm command
 \e[1mgulp\e[0m      to create a node.js container and execute a gulp command
@@ -176,7 +193,7 @@ node, npm, and gulp are run in the current dir.
 
 function _create-database ()
 {
-    cat <<EOF > "${projectdir}/docker-runtime/mysql-init/create_default_db.sql"
+    cat <<EOF > "${projectdir}/docker-runtime/mysql-init/0-create_default_db.sql"
 DROP DATABASE IF EXISTS $DB_DRUPAL_DB;
 CREATE DATABASE $DB_DRUPAL_DB COLLATE utf8mb4_unicode_ci;
 GRANT ALL
@@ -197,6 +214,9 @@ alias node=node # if scripts require an alias
 alias npm=npm # if scripts require an alias
 alias gulp=gulp # if scripts require an alias
 
+# aliases for convenience
+alias home="cd $(projectdir)"
+
 # prepare the directories to set ownership and access rights and to avoid scripts complaining about missing folders
 old_umask=$(umask)
 umask 000
@@ -209,8 +229,12 @@ mkdir "${projectdir}/docker-runtime/mysql" 2> /dev/null
 mkdir "${projectdir}/docker-runtime/mysql-init" 2> /dev/null
 mkdir "${projectdir}/www" 2> /dev/null
 mkdir "${projectdir}/www/docroot" 2> /dev/null # where to place php code
-mkdir "${projectdir}/www/private" 2> /dev/null # you can place private files here
-mkdir "${projectdir}/www/config" 2> /dev/null # you cn place the config files here
+mkdir "${projectdir}/www/private" 2> /dev/null
+mkdir "${projectdir}/www/private/default" 2> /dev/null
+mkdir "${projectdir}/www/private/default/files" 2> /dev/null # you can place private files here
+mkdir "${projectdir}/www/config" 2> /dev/null
+mkdir "${projectdir}/www/config/default" 2> /dev/null
+mkdir "${projectdir}/www/config/default/sync" 2> /dev/null # you cn place the config files here
 mkdir "${projectdir}/www/tmp" 2> /dev/null # scripts will place temporary files here
 umask "${old_umask}"
 

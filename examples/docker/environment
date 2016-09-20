@@ -11,7 +11,7 @@
 # With this variables, the names of all containers, networks and host/domainnames are built. They must be unique on the host machine.
 #
 # @TODO: change PROJECT_NAME_PLAIN (letters and numbers only)
-export PROJECT_NAME_PLAIN=myname
+export PROJECT_NAME_PLAIN=my
 # @TODO: change PROJECT_NAME (letters, numbers, dashes, dots, underscores, no whitespace)
 export PROJECT_NAME=my-name
 # @TODO: Networking: change the 3rd octet of IP-addresses
@@ -21,72 +21,72 @@ export DRUPAL_VERSION=8
 # @TODO: choose php version (7.0 or 5.6)
 export PHP_VERSION=7.0 # Allowed: 7.0, 5.6.
 # @TODO: choose wether xdebug is enabled(1) or not (0)
-export PHP_XDEBUG_ENABLED=0
+export PHP_XDEBUG_ENABLED=1
 
-domain=${PROJECT_NAME_PLAIN}.local
+domain=${PROJECT_NAME}.local
 unset SUBDOMAINS
 
 # service: php
 service=php
+export PHP_SERVICE=${service}
 # the container name:
 export PHP_NAME=${PROJECT_NAME_PLAIN}_${service}
 # the image to build the container from:
 export PHP_IMAGE=wodby/drupal-php:${PHP_VERSION}
-SUBDOMAINS="${SUBDOMAINS} ${service}"
+SUBDOMAINS+="${service} "
 
-# service: web
-service=web
+# service: www
+service=www
+export WWW_SERVICE=${service}
 # the container name:
-export WEB_NAME=${PROJECT_NAME_PLAIN}_${service}
+export WWW_NAME=${PROJECT_NAME_PLAIN}_${service}
 # the image to build the container from:
-export WEB_IMAGE=wodby/drupal-nginx
-# The host name to add to /etc/hosts. It must be unique on the host machine
-export WEB_DOMAIN=web.${domain}
-SUBDOMAINS="${SUBDOMAINS} ${service}"
+export WWW_IMAGE=wodby/drupal-nginx
+SUBDOMAINS+="${service} "
 
 # service: db
 service=db
+export DB_SERVICE=${service}
 # the container name:
 export DB_NAME=${PROJECT_NAME_PLAIN}_${service}
 # the image to build the container from:
 export DB_IMAGE=wodby/drupal-mariadb
-# the host to add to /etc/hosts. It must be unique on the host machine
-export DB_DOMAIN=${service}.${domain}
 # the db root password:
 export DB_ROOT_PASSWORD=drootpal
 # credentials for the Drupal database:
 export DB_DRUPAL_USER=drupal
 export DB_DRUPAL_DB=drupal
 export DB_DRUPAL_PASSWORD=drupal
-SUBDOMAINS="${SUBDOMAINS} ${service}"
+SUBDOMAINS+="${service} "
 
 # service: mail
 service=mail
+export MAIL_SERVICE=${service}
 # the container name:
 export MAIL_NAME=${PROJECT_NAME_PLAIN}_${service}
 # the image to build the container from
 export MAIL_IMAGE=mailhog/mailhog
-# the host to add to /etc/hosts. It must be unique on the host machine
-export MAIL_DOMAIN=${service}.${domain}
-SUBDOMAINS="${SUBDOMAINS} ${service}"
+SUBDOMAINS+="${service} "
 
 # service: pma
 service=pma
+export PMA_SERVICE=${service}
 # the container name:
 export PMA_NAME=${PROJECT_NAME_PLAIN}_${service}
 # the image to build the container from
 export PMA_IMAGE=phpmyadmin/phpmyadmin
-# the host to add to /etc/hosts. It must be unique on the host machine
-export PMA_DOMAIN=${service}.${domain}
-SUBDOMAINS="${SUBDOMAINS} ${service}"
+SUBDOMAINS+="${service} "
 
 export NET_SUBNET=${subnet}.0/24
 export NET_GATEWAY=${subnet}.1
-i=100
-typeset -u prefix
-for prefix in $SUBDOMAINS; do
-    export ${prefix}_IP=${subnet}.$i
-    i=$((i + 1))
+i=100 # first IP address (fourth octett)
+typeset -u prefix_u
+typeset -l prefix_l
+for prefix_u in $SUBDOMAINS; do
+    prefix_l=${prefix_u}
+    export ${prefix_u}_IP=${subnet}.$i
+    export ${prefix_u}_DOMAIN=${prefix_l}.${domain}
+    (( i++ ))
 done
 
 # Echo the values set above to create an environment file for use by Docker:
@@ -103,12 +103,14 @@ export COMPOSE_OPTIONS="--env-file=${DOCKER_ENV}"
 export DOCKER_PROJECT_NAME="${PROJECT_NAME_PLAIN}"
 
 # UserId of user www-data in containers
-export WEB_USER=82
+export WWW_USER=82
+export WWW_WORKDIR="docroot"
 
 # Images for services used on demand
 export NODE_IMAGE="node:6-slim"
 
-# Wether to show the greeting (1) or not (other value)
+# Wether to show the greeting (1) or not (other value) when opening a terminal
+# in PhpStorm
 export GREETING=1
 
 # Site install defaults
