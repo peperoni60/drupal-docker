@@ -1,5 +1,5 @@
 .directory
-.idea/
+# .idea/
 docker-runtime/
 www/
 docker/.docker.env
