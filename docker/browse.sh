@@ -6,7 +6,7 @@
 if [ "${1}" ] ; then
     url="${1}"
 else
-    url="http://$WEB_DOMAIN/"
+    url="http://$WWW_DOMAIN/"
 fi
 [[ -x $BROWSER ]] && exec "$BROWSER" "${url}"
 path=$(which xdg-open || which kde-open || which gnome-open) &&  $path "${url}" && exit

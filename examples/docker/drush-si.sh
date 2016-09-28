@@ -10,12 +10,10 @@ echo This will install a site with default values
 echo "*************************************************************************************"
 
 if [ $(find "$(docroot)" -prune -empty) ]; then
-    cd "$(projectdir)/docker"
     ./download_drupal.sh
 fi
 
-cd "$(docroot)"
-drush si \
+drush si -y \
     --db-url="mysql://${DB_DRUPAL_USER}:${DB_DRUPAL_PASSWORD}@$DB_DOMAIN/${DB_DRUPAL_DB}"  \
     --db-su=root \
     --db-su-pw=${DB_ROOT_PASSWORD} \
@@ -52,4 +50,4 @@ else # Drupal 7
 fi
 
 # Open browser
-./browse.sh "http://$WEB_DOMAIN/user/login?destination=/admin/reports/status"
+./browse.sh "http://$WWW_DOMAIN/user/login?destination=/admin/reports/status"
