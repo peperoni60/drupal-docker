@@ -195,7 +195,9 @@ If you execute startup.sh to start the containers, there will be a file called `
 ### Install Drupal website with default values <a name="default"></a>
 
 
-To install a Drupal website with default values execute the script **drush-si.sh** in PhpStorm (mark `drush-si.sh`, then press Ctrl+Shift+F10). This will download Drupal if necessary, create a database if necessary, install Drupal within this database and open the site in your browser. The default credentials (if not changed in the environment are user "me" with password "me".
+To install a Drupal website with default values execute the script **drush-si.sh** in PhpStorm (mark `drush-si.sh`, then press Ctrl+Shift+F10). This will download Drupal if necessary, create a database if necessary, install Drupal within this database and open the site in your browser. The default credentials (if not changed in the environment) are user "me" with password "me".
+
+> **All files and directories in www/docroot will be deleted!**
 
 
 > **Note**
@@ -211,7 +213,7 @@ To download Drupal, execute the script **download_drupal.sh** in PhpStorm (mark 
 
 * Now you can open the website at “http:\/\/www.*PROJECT_NAME*.local” (or “http://*subnet*.101” if you could not change /etc/hosts).
 
-> **Remember**  
+> **Remember**
     In Drupal the name of the mysql-host is not “localhost” but "db.*PROJECT_NAME*.local" or simply “**db**”, that is the name of the connected mysql-service.
 
 ## Features of your new development environment <a name="features"></a>
