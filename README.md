@@ -189,7 +189,7 @@ In PhpStorm you can now easily add a run configuration with startup.sh. From the
     
 ### What are the host names and IP adresses? <a name="ip"></a>
  
-If you execute startup.sh to start the containers, there will be a file called `.docker.env` in the *Project*/docker directory. Open that file and you will find the host names and IP adresses.
+If you execute startup.sh to start the containers, there will be a file called `.docker.env` in the *Project*/docker directory. Open that file and you will find the host names and IP adresses. Alternatively you can look into /etc/hosts.
     
 
 ### Install Drupal website with default values <a name="default"></a>
