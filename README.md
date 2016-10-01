@@ -195,8 +195,14 @@ If you execute startup.sh to start the containers, there will be a file called `
 ### Install Drupal website with default values <a name="default"></a>
 
 
-To install a Drupal website with default values execute the script **drush-si.sh** in PhpStorm (mark `drush-si.sh`, then press Ctrl+Shift+F10). This will download Drupal if necessary, create a database if necessary, install Drupal within this database and open the site in your browser. 
-> To manually open your new site point your browser at “http:\/\/www.*PROJECT_NAME_PLAIN*.local” (or “http://*subnet*.101” if you could not change /etc/hosts). PhpMyAdmin is reachable via “http:\/\/pma.*PROJECT_NAME_PLAIN*.local”, Mailhog via “http:\/\/mail.*PROJECT_NAME_PLAIN*.local” (or their IP addresses). **You must'nt specify a port number** as described in the documentation of Docker4Drupal (http://docker4drupal.org) 
+To install a Drupal website with default values execute the script **drush-si.sh** in PhpStorm (mark `drush-si.sh`, then press Ctrl+Shift+F10). This will download Drupal if necessary, create a database if necessary, install Drupal within this database and open the site in your browser. The default credentials (if not changed in the environment are user "me" with password "me".
+
+
+> **Note**
+    The current image woodby/php:5.6 does not support "drush si". If you need to use php 5.6, stop the containers, temporarily switch to php 7.0 in the environment file and start the containers again with `startup.sh`. After the site has been installed, you can stop the containers again, switch back to php 5.6, and restart the containers.
+    
+> **Tip**
+    To manually open your new site point your browser at “http:\/\/www.*PROJECT_NAME_PLAIN*.local” (or “http://*subnet*.101” if you could not change /etc/hosts). PhpMyAdmin is reachable via “http:\/\/pma.*PROJECT_NAME_PLAIN*.local”, Mailhog via “http:\/\/mail.*PROJECT_NAME_PLAIN*.local” (or their IP addresses). **You must'nt specify a port number** as described in the documentation of Docker4Drupal (http://docker4drupal.org) 
      
 ### Install Drupal with custom values <a name="custom"></a>
 
@@ -205,7 +211,7 @@ To download Drupal, execute the script **download_drupal.sh** in PhpStorm (mark 
 
 * Now you can open the website at “http:\/\/www.*PROJECT_NAME*.local” (or “http://*subnet*.101” if you could not change /etc/hosts).
 
-    > **Remember**  
+> **Remember**  
     In Drupal the name of the mysql-host is not “localhost” but "db.*PROJECT_NAME*.local" or simply “**db**”, that is the name of the connected mysql-service.
 
 ## Features of your new development environment <a name="features"></a>
