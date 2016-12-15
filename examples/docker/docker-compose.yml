@@ -21,7 +21,7 @@ services:
     container_name: $PHP_NAME
     image: $PHP_IMAGE
     environment:
-      PHP_SENDMAIL_PATH: /usr/sbin/sendmail -t -i -S mailhog:1025
+      PHP_SENDMAIL_PATH: /usr/sbin/sendmail -t -i -S mail:1025
       PHP_XDEBUG_ENABLED: $PHP_XDEBUG_ENABLED
       PHP_HOST_NAME: $WWW_DOMAIN
       PHP_SITE_NAME: dev # drush alias name
@@ -69,7 +69,7 @@ services:
     container_name: $PMA_NAME
     image: $PMA_IMAGE
     environment:
-      PMA_HOST: database
+      PMA_HOST: $DB_IP
       PMA_USER: root
       PMA_PASSWORD: $DB_ROOT_PASSWORD
       PHP_UPLOAD_MAX_FILESIZE: 1G
